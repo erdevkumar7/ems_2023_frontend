@@ -7,7 +7,6 @@ function index() {
 }
 
 export default index
-
 // "use client";
 // import { Box, Button, CircularProgress, Grid, IconButton, TextField, Typography } from '@mui/material'
 // import Link from 'next/link'
