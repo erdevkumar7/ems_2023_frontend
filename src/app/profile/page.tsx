@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InboxIcon from '@mui/icons-material/Inbox';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useRouter } from "next/navigation";
 
 function ProfilePage() {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [getUserData, setUserData] = useState<any | null>(null);
   const [getEmailData, setEmailData] = useState<any>('')
+  const router = useRouter()
 
   console.log(getEmailData, 'dddff')
   const {
@@ -86,7 +88,7 @@ function ProfilePage() {
 
               >
                 <ListItem>
-                  <ListItemButton >
+                  <ListItemButton onClick={()=>{router.push('/sendmail')}}>
                     Compose
                   </ListItemButton>
                 </ListItem>

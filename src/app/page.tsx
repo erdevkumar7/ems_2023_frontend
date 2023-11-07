@@ -1,5 +1,5 @@
-import Login from './pages/login/page';
-import Registration from "./pages/registration/page";
+import Login from './login/page';
+import Registration from "./registration/page";
 
 export default function Home() {
   return (

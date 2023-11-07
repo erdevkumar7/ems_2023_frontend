@@ -15,12 +15,12 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { userRegistrationValidations } from "../../validation_schema/userValidation";
+import { userRegistrationValidations } from "../validation_schema/userValidation";
 import { IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 // import { useRouter } from "next/router";
 import { useRouter } from "next/navigation";
-import { HandleRegister } from "../../services/userServices";
+import { HandleRegister } from "../services/userServices";
 // import{  } from "../login/index";
 const theme = createTheme();
 
@@ -36,20 +36,19 @@ export default function Registration() {
   } = useForm<any>({ resolver: yupResolver(userRegistrationValidations) });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
   const onSubmit = async (event: any) => {
-
     setLoading(true);
     try {
-      const res = await HandleRegister(event)
+      const res = await HandleRegister(event);
       if (res.status === 201) {
         setTimeout(() => {
           router.push("/login");
         }, 1000);
         setLoading(false);
       }
-    }
-    catch (error) {
+    } catch (error) {
       setLoading(false);
     }
   };
@@ -75,7 +74,7 @@ export default function Registration() {
           }}
         >
           <Typography component="h1" variant="h5">
-          Create Your Account
+            Create Your Account
           </Typography>
           <Box
             component="form"
@@ -165,7 +164,6 @@ export default function Registration() {
                 {errors && errors.password
                   ? ErrorShowing(errors?.password?.message)
                   : ""}
-
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -182,7 +180,11 @@ export default function Registration() {
                         onClick={handleClickShowConfirmPassword}
                         edge="end"
                       >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     ),
                   }}
@@ -202,8 +204,9 @@ export default function Registration() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                Already have an account?
+                <Link href="/login" variant="body2">
+                  Login
                 </Link>
               </Grid>
             </Grid>

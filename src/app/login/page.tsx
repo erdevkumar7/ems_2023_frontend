@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import styles from './styles/login.module.css'
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { userLoginValidations } from '../../validation_schema/userValidation';
+import { userLoginValidations } from '../validation_schema/userValidation';
 import { LoadingButton } from "@mui/lab";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { redirect } from 'next/navigation'
@@ -45,7 +45,7 @@ export default function SignInSide() {
             "userData",
             JSON.stringify(res.data.userDetails)
           );
-          router.push("/pages/profile");
+          router.push("/profile");
         }
         setLoading(false);
       })
@@ -172,7 +172,7 @@ export default function SignInSide() {
                 </Grid>
                 <Grid item>
                   Don&lsquo;t have an account?
-                  <Link href="/pages/registration">
+                  <Link href="/registration">
                     {" "}
                     Create Now
                   </Link>
