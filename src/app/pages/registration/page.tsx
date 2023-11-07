@@ -24,7 +24,7 @@ import { HandleRegister } from "../../services/userServices";
 // import{  } from "../login/index";
 const theme = createTheme();
 
-export default function SignUp() {
+export default function Registration() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState<boolean>(false);
