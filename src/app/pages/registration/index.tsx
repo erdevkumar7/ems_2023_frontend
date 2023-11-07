@@ -38,7 +38,7 @@ export default function SignUp() {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
   const onSubmit = async (event: any) => {
-    // console.log(errors, 'ssssssssssssss', event)
+
     setLoading(true);
     try {
       const res = await HandleRegister(event)
