@@ -1,6 +1,6 @@
 'use client'
 import { getSearchedEmail, handleEmailData, handleSendEmail } from "@/app/services/emailServices";
-import { HandleProfile } from "@/app/services/userServices";
+import { HandleLogout, HandleProfile } from "@/app/services/userServices";
 import { Card, CardContent, Grid, List, ListItem, ListItemButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Typography, Avatar, Modal, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from "next/navigation";
 import ReactQuill from "react-quill";
+import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
 
 export const BASE_URL = "http://localhost:6030";
 
@@ -178,6 +179,12 @@ function ProfilePage() {
                   <ListItemButton>
                     <DeleteIcon sx={{ marginRight: '5px' }} />
                     Bin
+                  </ListItemButton>
+                </ListItem>
+                <ListItem>
+                  <ListItemButton onClick={()=>{HandleLogout()}}>
+                    <PowerSettingsNewOutlinedIcon sx={{ marginRight: '5px' }} />
+                    Logout
                   </ListItemButton>
                 </ListItem>
               </List>

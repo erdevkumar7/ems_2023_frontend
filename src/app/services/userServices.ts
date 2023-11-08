@@ -19,7 +19,7 @@ export const HandleRegister = async (reqData: any) => {
       toast.error("Email already exists")
     } else if (error.response.status === 401) {
       console.log('LOGOUT USER')
-      //   HandleLogout()
+        HandleLogout()
     } else {
       toast.error("User added failed")
     }
@@ -41,7 +41,7 @@ export const HandleLogin = async (reqData: any) => {
     } else if (error.response.status === 404) {
       toast.error(error.response.data)
     } else if (error.response.status === 401) {
-      // HandleLogout()
+      HandleLogout()
     } else {
       toast.error("User added failed")
     }
@@ -60,10 +60,19 @@ export const HandleProfile = async (userId: any) => {
     })
     .catch((error) => {
       if (error.response.status === 401) {
-        // HandleLogout();
+        HandleLogout();
       } else {
         toast.error("Something went wrong");
       }
       return error;
     });
+};
+
+
+export const HandleLogout = () => {
+  // googleLogout()
+  localStorage.clear()
+  window.location.replace("/login");
+  // GenerateToken()
+
 };
