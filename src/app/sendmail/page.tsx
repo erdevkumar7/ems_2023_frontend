@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Grid, Paper, Box } from "@mui/material";
-import { handleSendEmail } from "@/app/services/emailServices";
+import { getSearchedEmail, handleSendEmail } from "@/app/services/emailServices";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 const ComposeEmail = () => {
+  const [search, setSearch] = useState("");
+  const [rows, setRows] = useState<any>([]);
   const [recipient, setRecipient] = useState("");
   const [cc, setCC] = useState("");
   const [bcc, setBCC] = useState("");
@@ -16,6 +18,8 @@ const ComposeEmail = () => {
   const [isCCOpen, setIsCCOpen] = useState(false);
   const [isBCCOpen, setIsBCCOpen] = useState(false);
 
+
+  console.log(rows?.to_email)
   const toggleCC = () => {
     setIsCCOpen(!isCCOpen);
   };
@@ -56,18 +60,34 @@ const ComposeEmail = () => {
   };
 
   const handleSendClick = async () => {
-    console.log(recipient, subject, message);
-    const mailData = await handleSendEmail({
-      user_id: 2,
-      to_email: recipient,
-      subject: subject,
-      cc: cc,
-      bcc: bcc,
-      content: message,
-      sender_email_id: senderEmail,
-    });
 
-    console.log(senderEmail, "tttt", mailData);
+    // console.log(recipient, subject, message);
+    if (rows?.to_email === undefined) {
+      console.log('errrr')
+    } else {
+      const mailData = await handleSendEmail({
+        user_id: 2,
+        to_email: recipient,
+        subject: subject,
+        cc: cc,
+        bcc: bcc,
+        content: message,
+        sender_email_id: senderEmail,
+      });
+      console.log(senderEmail, "tttt", mailData);
+    }
+  };
+
+
+  const handleSearch = async (e: any) => {
+    const search = e.target.value;
+    setSearch(e.target.value);
+    const searchData = await getSearchedEmail(search);
+    if (searchData) {
+      setRows(searchData.data);
+    }
+    // console.log(searchData, 'ffffffffffff')
+
   };
 
   return (
@@ -78,13 +98,20 @@ const ComposeEmail = () => {
       <h2>Compose Email</h2>
       <form>
         <Box display="flex" alignItems="center" marginBottom={2}>
-          <TextField
+          {rows?.to_email === undefined ? <TextField
             label="To"
-            fullWidth
+            color="error"
+            id="standard-search"
+            value={rows && rows?.to_email}
             variant="outlined"
-            value={recipient}
-            onChange={handleRecipientChange}
-          />
+            onChange={(e) => handleSearch(e)}
+          /> : <TextField
+            label="To"
+            id="standard-search"
+            value={rows && rows?.to_email}
+            variant="outlined"
+            onChange={(e) => handleSearch(e)}
+          />}
           <Button onClick={toggleCC} style={{ marginLeft: "10px" }}>
             CC
           </Button>
