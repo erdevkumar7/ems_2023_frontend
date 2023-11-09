@@ -1,11 +1,35 @@
-'use client'
-import { getSearchedEmail, handleEmailData, handleSendEmail } from "@/app/services/emailServices";
-import { HandleLogout, HandleProfile } from "@/app/services/userServices";
-import { Card, CardContent, Grid, List, ListItem, ListItemButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Typography, Avatar, Modal, TextField } from "@mui/material";
+"use client";
+import {
+  getSearchedEmail,
+  handleEmailData,
+  handleSendEmail,
+} from "@/app/services/emailServices";
+import { HandleLogout, HandleProfile, getUserByEmail } from "@/app/services/userServices";
+import {
+  Card,
+  CardContent,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Box,
+  Typography,
+  Avatar,
+  Modal,
+  TextField,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import InboxIcon from '@mui/icons-material/Inbox';
-import DeleteIcon from '@mui/icons-material/Delete';
+import InboxIcon from "@mui/icons-material/Inbox";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useRouter } from "next/navigation";
 import ReactQuill from "react-quill";
 import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
@@ -13,8 +37,8 @@ import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOu
 export const BASE_URL = "http://localhost:6030";
 
 function ProfilePage() {
-  const [getLocalData, setLocalData] = useState('');
-  const [search, setSearch] = useState("");
+  const [getLocalData, setLocalData] = useState<any>("");
+  const [search, setSearch] = useState<any>("");
   const [rows, setRows] = useState<any>([]);
   const [recipient, setRecipient] = useState("");
   const [cc, setCC] = useState("");
@@ -27,8 +51,8 @@ function ProfilePage() {
   const [isBCCOpen, setIsBCCOpen] = useState(false);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [getUserData, setUserData] = useState<any | null>(null);
-  const [getEmailData, setEmailData] = useState<any>('')
-  const router = useRouter()
+  const [getEmailData, setEmailData] = useState<any>("");
+  const router = useRouter();
   const [isComposing, setComposing] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false); // State variable to control modal visibility
 
@@ -57,26 +81,25 @@ function ProfilePage() {
     formState: { errors },
   } = useForm<any>();
 
-
   const onSubmit = async (event: any) => {
-console.log('suuuuuuuuuuuu')
+    setModalOpen(false); // Close the modal
+
+    const mailData = await handleSendEmail({
+      to_email: event?.email,
+      subject: event?.subject,
+      user_id: search?.id,
+      cc: event?.cc,
+      bcc: event?.bcc,
+      content: event?.message,
+      sender_email_id: getLocalData?.email,
+    });
+    console.log(event, "ddd", mailData);
   };
 
-
-
   // const handleSendClick = async () => {
-  //   const mailData = await handleSendEmail({
-  //     to_email: 'barodiyadevendra7@gmail.com',
-  //     subject: subject,
-  //     cc: cc,
-  //     bcc: bcc,
-  //     content: message,
-  //     sender_email_id: senderEmail,
-  //   });
 
   // };
   var profile_picManage: any;
-
 
   useEffect(() => {
     let localData: any;
@@ -85,34 +108,15 @@ console.log('suuuuuuuuuuuu')
     }
     if (localData) {
       const userData = JSON.parse(localData);
-      setLocalData(userData)
+      setLocalData(userData);
       // getProfileData(userData?.id);
-      HandleProfile(userData?.id).then((user) =>
-        setUserData(user.data)
-      );
+      HandleProfile(userData?.id).then((user) => setUserData(user.data));
 
       handleEmailData(userData?.id).then((email) => {
-        setEmailData(email.data)
-      }
-      )
+        setEmailData(email.data);
+      });
     }
-  }, [])
-
-  const handleCCChange = (e: any) => {
-    setCC(e.target.value);
-  };
-
-  const handleBCCChange = (e: any) => {
-    setBCC(e.target.value);
-  };
-
-  const handleSubjectChange = (e: any) => {
-    setSubject(e.target.value);
-  };
-
-  const handleMessageChange = (e: any) => {
-    setMessage(e.target.value)
-  };
+  }, []);
 
   const handleAttachmentChange = (e: any) => {
     const files = e.target.files;
@@ -120,37 +124,39 @@ console.log('suuuuuuuuuuuu')
     setAttachments(fileArray);
   };
 
-
-
   const handleSearch = async (e: any) => {
     const search = e.target.value;
-    setSearch(e.target.value);
-    const searchData = await getSearchedEmail(search);
-    if (searchData) {
-      setRows(searchData.data);
+    // setSearch(e.target.value);
+    const searchData = await getUserByEmail(search);
+    if(searchData.status === 200){
+      setSearch(searchData.data)
     }
+    // if (searchData) {
+    //   setRows(searchData.data);
+    // }
   };
-  // console.log(rows?.to_email, 'ffffffffffff')
 
+  console.log(search)
   return (
-    <Grid sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-    }}>
+    <Grid
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
       <Grid container spacing={3}>
-        <Grid item xs >
+        <Grid item xs>
           <Box
             component="img"
-            src='/img/gmail.png'
+            src="/img/gmail.png"
             width={"130px"}
             height={"60px"}
           />
         </Grid>
-        <Grid item xs={6}>
-        </Grid>
-        <Grid item sx={{ display: 'block' }} xs >
-          <Grid sx={{ float: 'right', padding: '20px' }}>
+        <Grid item xs={6}></Grid>
+        <Grid item sx={{ display: "block" }} xs>
+          <Grid sx={{ float: "right", padding: "20px" }}>
             <Avatar
               src={getUserData && `${BASE_URL}/${getUserData?.profile_pic}`}
             />
@@ -159,41 +165,50 @@ console.log('suuuuuuuuuuuu')
       </Grid>
 
       <Card sx={{ flex: 1 }}>
-        <CardContent sx={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
-          <Grid container >
+        <CardContent
+          sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Grid container>
             <Grid item xs={4}>
               <List>
                 <ListItem>
-                  <Button variant="contained" onClick={() => setModalOpen(true)}>
+                  <Button
+                    variant="contained"
+                    onClick={() => setModalOpen(true)}
+                  >
                     Compose
                   </Button>
                 </ListItem>
                 <ListItem>
                   <ListItemButton selected>
-                    <InboxIcon sx={{ marginRight: '5px' }} />
+                    <InboxIcon sx={{ marginRight: "5px" }} />
                     Inbox
                   </ListItemButton>
                 </ListItem>
                 <ListItem>
                   <ListItemButton>
-                    <DeleteIcon sx={{ marginRight: '5px' }} />
+                    <DeleteIcon sx={{ marginRight: "5px" }} />
                     Bin
                   </ListItemButton>
                 </ListItem>
                 <ListItem>
-                  <ListItemButton onClick={() => { HandleLogout() }}>
-                    <PowerSettingsNewOutlinedIcon sx={{ marginRight: '5px' }} />
+                  <ListItemButton
+                    onClick={() => {
+                      HandleLogout();
+                    }}
+                  >
+                    <PowerSettingsNewOutlinedIcon sx={{ marginRight: "5px" }} />
                     Logout
                   </ListItemButton>
                 </ListItem>
               </List>
             </Grid>
 
-            <Grid item xs={8} >
+            <Grid item xs={8}>
               <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
@@ -204,20 +219,23 @@ console.log('suuuuuuuuuuuu')
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {getEmailData && getEmailData.map((item: any) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item.to_email}</TableCell>
-                        <TableCell>{item.subject} - {item.content}</TableCell>
-                        <TableCell>{item.createdAt}</TableCell>
-                      </TableRow>
-                    ))}
+                    {getEmailData &&
+                      getEmailData.map((item: any) => (
+                        <TableRow key={item.id}>
+                          <TableCell>{item?.sender_email_id}</TableCell>
+                          <TableCell>
+                            {item.subject} - {item.content}
+                          </TableCell>
+                          <TableCell>{item.createdAt}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
             </Grid>
           </Grid>
         </CardContent>
-      </Card >
+      </Card>
 
       <Modal
         open={isModalOpen}
@@ -227,18 +245,17 @@ console.log('suuuuuuuuuuuu')
       >
         <Box
           sx={{
-            position: 'absolute' as 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(50%, -10%)',
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(50%, -10%)",
             width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
+            bgcolor: "background.paper",
+            border: "2px solid #000",
             boxShadow: 24,
             p: 4,
           }}
         >
-
           <Paper
             elevation={2}
             style={{ padding: "10px", maxWidth: "600px", margin: "auto" }}
@@ -256,9 +273,9 @@ console.log('suuuuuuuuuuuu')
                 <TextField
                   label="To"
                   id="standard-search"
-                  value={rows?.to_email}
                   variant="outlined"
                   {...register("email")}
+                  onChange={handleSearch}
                 />
                 <Button onClick={toggleCC} style={{ marginLeft: "10px" }}>
                   CC
@@ -268,8 +285,7 @@ console.log('suuuuuuuuuuuu')
                     label="CC"
                     fullWidth
                     variant="outlined"
-                    value={cc}
-                    onChange={handleCCChange}
+                    {...register("cc")}
                   />
                 )}
                 <Button onClick={toggleBCC} style={{ marginLeft: "10px" }}>
@@ -280,8 +296,7 @@ console.log('suuuuuuuuuuuu')
                     label="BCC"
                     fullWidth
                     variant="outlined"
-                    value={bcc}
-                    onChange={handleBCCChange}
+                    {...register("bcc")}
                   />
                 )}
               </Box>
@@ -290,8 +305,7 @@ console.log('suuuuuuuuuuuu')
                   label="Subject"
                   fullWidth
                   variant="outlined"
-                  value={subject}
-                  onChange={handleSubjectChange}
+                  {...register("subject")}
                 />
               </Box>
               <Box>
@@ -299,8 +313,7 @@ console.log('suuuuuuuuuuuu')
                   label="Message"
                   fullWidth
                   variant="outlined"
-                  value={message}
-                  onChange={handleMessageChange}
+                  {...register("message")}
                 />
                 {/* <ReactQuill theme="snow" value={message} onChange={setMessage} /> */}
               </Box>
@@ -317,15 +330,11 @@ console.log('suuuuuuuuuuuu')
               </Grid>
             </Box>
             {/* <Button onClick={handleCloseModal}>Cancel</Button> */}
-
           </Paper>
         </Box>
-      </Modal >
-
-
-    </Grid >
+      </Modal>
+    </Grid>
   );
 }
 
 export default ProfilePage;
-

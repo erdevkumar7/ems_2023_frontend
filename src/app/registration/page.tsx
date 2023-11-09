@@ -244,7 +244,10 @@ export default function Registration() {
           user_id: res.data.id,
           subject: "Wecome",
           content: 'Thanks for registration',
+          sender_email_id: 'admin@emailmanagement.com'
         });
+
+        console.log(mailData,'dddd',res)
         setTimeout(() => {
           router.push("/");
         }, 1000);

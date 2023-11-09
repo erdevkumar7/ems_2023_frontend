@@ -147,3 +147,23 @@ export const HandleLogout = () => {
   // GenerateToken()
 
 };
+
+export const getUserByEmail = async (search: any) => {
+  return await axios({
+      method: "POST",
+      url: `${BASE_URL}/getuserbyemail/${search}`,
+      // headers: LoginHeader(),
+      // data: reqData,
+  })
+      .then((request) => {
+          return request;
+      })
+      .catch((error) => {
+          if (error.response.status === 401) {
+              // HandleLogout();
+          } else {
+              toast.error("Something went wrong");
+          }
+          return error;
+      });
+};

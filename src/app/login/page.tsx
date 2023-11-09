@@ -27,6 +27,7 @@ import { HandleLogin, HandleLoginByGoogle, HandleRegister } from "@/app/services
 import { useRouter } from "next/navigation";
 import { ToastContainer } from "react-toastify";
 import { useGoogleLogin } from '@react-oauth/google';
+import { handleSendEmail } from "../services/emailServices";
 // import {} from "../registration"
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -78,8 +79,19 @@ export default function SignInSide() {
           };
           setGoogleLoading(true);
           await HandleRegister(reqData)
-            .then((res) => {
+            .then(async(res) => {
               if (res.status === 201) {
+               
+                const mailData = await handleSendEmail({
+                  to_email: res.data.user.email,
+                  user_id: res.data.user.id,
+                  subject: "Wecome",
+                  content: 'Thanks for registration',
+                  sender_email_id: 'admin@emailmanagement.com'
+                });
+
+                console.log(mailData,'ddd',res.data.user)
+
                 localStorage.setItem("loginToken", res.data.loginToken);
                 localStorage.setItem(
                   "userData",
