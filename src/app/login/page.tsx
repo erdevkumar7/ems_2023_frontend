@@ -23,9 +23,10 @@ import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { HandleLogin } from "@/app/services/userServices";
+import { HandleLogin, HandleLoginByGoogle, HandleRegister } from "@/app/services/userServices";
 import { useRouter } from "next/navigation";
 import { ToastContainer } from "react-toastify";
+import { useGoogleLogin } from '@react-oauth/google';
 // import {} from "../registration"
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -64,6 +65,41 @@ export default function SignInSide() {
       });
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      await HandleLoginByGoogle(tokenResponse)
+        .then(async (res) => {
+          const reqData = {
+            first_name: res.data.given_name,
+            last_name: res.data.family_name,
+            profile_pic: res.data.picture,
+            email: res.data.email,
+            loggedin_by: "google",
+          };
+          setGoogleLoading(true);
+          await HandleRegister(reqData)
+            .then((res) => {
+              if (res.status === 201) {
+                localStorage.setItem("loginToken", res.data.loginToken);
+                localStorage.setItem(
+                  "userData",
+                  JSON.stringify(res?.data?.updatedUser ? res?.data?.updatedUser : res?.data?.user
+                  )
+                );
+                router.push("/profile");
+              }
+              setGoogleLoading(false);
+            })
+            .catch(() => {
+              setGoogleLoading(false);
+            });
+        })
+        .catch((err) => console.log(err));
+    },
+    onError: (errorResponse) => console.log(errorResponse),
+  });
+
+
   function ErrorShowing(errorMessage: any) {
     return (
       <Typography variant="body2" color={"error"} gutterBottom>
@@ -82,8 +118,6 @@ export default function SignInSide() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -92,7 +126,14 @@ export default function SignInSide() {
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
-        />
+        >
+          <Box
+            component={"img"}
+            src={"/img/login3.jpg"}
+            width={"100%"}
+            height={"100%"}
+          />
+        </Grid>
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
@@ -146,12 +187,12 @@ export default function SignInSide() {
               {errors && errors.email
                 ? ErrorShowing(errors?.email?.message)
                 : ""
-                ? errors && errors.email
-                  ? ErrorShowing(errors?.email?.message)
-                  : ""
-                : errors && errors.password
-                ? ErrorShowing(errors?.password?.message)
-                : ""}
+                  ? errors && errors.email
+                    ? ErrorShowing(errors?.email?.message)
+                    : ""
+                  : errors && errors.password
+                    ? ErrorShowing(errors?.password?.message)
+                    : ""}
 
               {!loading ? (
                 <Button
@@ -160,7 +201,7 @@ export default function SignInSide() {
                   size="large"
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  // className={styles.mainBoxButton}
+                // className={styles.mainBoxButton}
                 >
                   Sign In
                 </Button>
@@ -206,7 +247,7 @@ export default function SignInSide() {
                 }
                 sx={{ marginTop: "24px", color: "#000" }}
                 disabled={googleLoading}
-                // onClick={() => googleLogin()}
+                onClick={() => googleLogin()}
               >
                 Continue with Google
               </Button>

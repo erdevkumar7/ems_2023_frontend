@@ -38,8 +38,21 @@ export const userRegistrationValidations = Yup.object({
             .required("Required"),
     phone_number:
         Yup.string().required("Phone number is required")
-        .matches(phoneRegExp, 'Phone number is not valid'),
+            .matches(phoneRegExp, 'Phone number is not valid'),
 
     date_of_birth: Yup.string().required('Date of Birth is a required field'),
 
+});
+
+export const userResetPasswordValidations = Yup.object({
+    password:
+        Yup.string().required('New password is a required field')
+            .min(8, 'Password must contain 8 or more characters with at least one of each: uppercase, lowercase, number and special character')
+            .matches(passwordRules, { message: "Password must have at least one of each: uppercase, lowercase, number and special character" }),
+    confirm_password:
+        Yup.string().required('Confirm password is a required field')
+            .min(8, 'Password must contain 8 or more characters with at least one of each: uppercase, lowercase, number and special character')
+            .matches(passwordRules, { message: "Password must have at least one of each: uppercase, lowercase, number and special character" })
+            .oneOf([Yup.ref("password"), ''], "Passwords must match")
+            .required("Required"),
 });
