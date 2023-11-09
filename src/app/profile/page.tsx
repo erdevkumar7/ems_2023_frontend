@@ -13,6 +13,7 @@ import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOu
 export const BASE_URL = "http://localhost:6030";
 
 function ProfilePage() {
+  const [getLocalData, setLocalData] = useState('');
   const [search, setSearch] = useState("");
   const [rows, setRows] = useState<any>([]);
   const [recipient, setRecipient] = useState("");
@@ -30,6 +31,7 @@ function ProfilePage() {
   const router = useRouter()
   const [isComposing, setComposing] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false); // State variable to control modal visibility
+
   const handleComposeClick = () => {
     setComposing(true);
     setModalOpen(true); // Open the modal
@@ -55,6 +57,24 @@ function ProfilePage() {
     formState: { errors },
   } = useForm<any>();
 
+
+  const onSubmit = async (event: any) => {
+console.log('suuuuuuuuuuuu')
+  };
+
+
+
+  // const handleSendClick = async () => {
+  //   const mailData = await handleSendEmail({
+  //     to_email: 'barodiyadevendra7@gmail.com',
+  //     subject: subject,
+  //     cc: cc,
+  //     bcc: bcc,
+  //     content: message,
+  //     sender_email_id: senderEmail,
+  //   });
+
+  // };
   var profile_picManage: any;
 
 
@@ -65,6 +85,7 @@ function ProfilePage() {
     }
     if (localData) {
       const userData = JSON.parse(localData);
+      setLocalData(userData)
       // getProfileData(userData?.id);
       HandleProfile(userData?.id).then((user) =>
         setUserData(user.data)
@@ -99,24 +120,6 @@ function ProfilePage() {
     setAttachments(fileArray);
   };
 
-  const handleSendClick = async () => {
-
-    // console.log(recipient, subject, message);
-    if (rows?.to_email === undefined || rows.to_email === null) {
-      alert("please Input correct Email");
-    } else {
-      const mailData = await handleSendEmail({
-        user_id: 2,
-        to_email: recipient,
-        subject: subject,
-        cc: cc,
-        bcc: bcc,
-        content: message,
-        sender_email_id: senderEmail,
-      });
-      console.log(senderEmail, "tttt", mailData);
-    }
-  };
 
 
   const handleSearch = async (e: any) => {
@@ -127,7 +130,7 @@ function ProfilePage() {
       setRows(searchData.data);
     }
   };
-  console.log(rows?.to_email, 'ffffffffffff')
+  // console.log(rows?.to_email, 'ffffffffffff')
 
   return (
     <Grid sx={{
@@ -182,7 +185,7 @@ function ProfilePage() {
                   </ListItemButton>
                 </ListItem>
                 <ListItem>
-                  <ListItemButton onClick={()=>{HandleLogout()}}>
+                  <ListItemButton onClick={() => { HandleLogout() }}>
                     <PowerSettingsNewOutlinedIcon sx={{ marginRight: '5px' }} />
                     Logout
                   </ListItemButton>
@@ -240,15 +243,22 @@ function ProfilePage() {
             elevation={2}
             style={{ padding: "10px", maxWidth: "600px", margin: "auto" }}
           >
-
-            <form>
+            <Box
+              component="form"
+              method="POST"
+              noValidate
+              autoComplete="off"
+              onSubmit={handleSubmit(onSubmit)}
+              // className={styles.mainBoxContentForm}
+              sx={{ mt: 1 }}
+            >
               <Box display="flex" alignItems="center" marginBottom={2}>
                 <TextField
                   label="To"
                   id="standard-search"
                   value={rows?.to_email}
                   variant="outlined"
-                  onChange={(e) => handleSearch(e)}
+                  {...register("email")}
                 />
                 <Button onClick={toggleCC} style={{ marginLeft: "10px" }}>
                   CC
@@ -296,13 +306,16 @@ function ProfilePage() {
               </Box>
               <input type="file" multiple onChange={handleAttachmentChange} />
               <Grid container justifyContent="flex-end">
-                <Button variant="contained" color="primary" onClick={handleSendClick}>
-                  Send
+                <Button
+                  type="submit"
+                  size="large"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  send
                 </Button>
               </Grid>
-
-            </form>
-
+            </Box>
             {/* <Button onClick={handleCloseModal}>Cancel</Button> */}
 
           </Paper>

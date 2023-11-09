@@ -34,7 +34,7 @@ const ComposeEmail = () => {
       localData = window.localStorage.getItem("userData");
     }
     const userData = JSON.parse(localData);
-    setSenderEmail(userData.email);
+    setSenderEmail(userData?.email);
   }, []);
 
   const handleRecipientChange = (e: any) => {
@@ -61,13 +61,10 @@ const ComposeEmail = () => {
 
   const handleSendClick = async () => {
 
-    // console.log(recipient, subject, message);
-    if (rows?.to_email === undefined) {
-      console.log('errrr')
-    } else {
+  
       const mailData = await handleSendEmail({
         user_id: 2,
-        to_email: recipient,
+        to_email: 'barodiyadevendra7@gmail.com',
         subject: subject,
         cc: cc,
         bcc: bcc,
@@ -75,7 +72,7 @@ const ComposeEmail = () => {
         sender_email_id: senderEmail,
       });
       console.log(senderEmail, "tttt", mailData);
-    }
+    
   };
 
 
@@ -97,7 +94,18 @@ const ComposeEmail = () => {
     >
       <h2>Compose Email</h2>
       <form>
-        <Box display="flex" alignItems="center" marginBottom={2}>
+      <Box marginBottom={2}>
+          <TextField
+            label="To"
+            fullWidth
+            variant="outlined"
+            value={recipient}
+            onChange={handleRecipientChange}
+          />
+        </Box>
+
+
+        {/* <Box display="flex" alignItems="center" marginBottom={2}>
           {rows?.to_email === undefined ? <TextField
             label="To"
             color="error"
@@ -136,7 +144,7 @@ const ComposeEmail = () => {
               onChange={handleBCCChange}
             />
           )}
-        </Box>
+        </Box> */}
         <Box marginBottom={2}>
           <TextField
             label="Subject"
