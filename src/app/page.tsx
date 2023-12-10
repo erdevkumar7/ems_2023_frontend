@@ -1,6 +1,7 @@
 'use client'  //  for make client component
+// commemt git
 import Login from './login/page';
-import Registration from "./registration/page";
+// import Registration from "./registration/page";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export default function Home() {
