@@ -1,4 +1,4 @@
-'use client'
+'use client'  //  for make client component
 import Login from './login/page';
 import Registration from "./registration/page";
 import { GoogleOAuthProvider } from '@react-oauth/google';
